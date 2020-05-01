@@ -1,0 +1,20 @@
+---
+- hosts: gss-wks
+  become: yes
+  become_method: sudo
+
+  roles:
+    - { role: common, tags: common }
+    - { role: teamviewer, tags: teamviewer }
+    - { role: security, tags: security }
+    - { role: clamav, tags: clamav }
+
+  tasks:
+    - name: Upgrade system
+      apt: upgrade=full
+
+    - name: reboot system
+      shell: sleep 2 && shutdown -r now "Ansible package updates triggered"
+      async: 1
+      poll: 0
+      ignore_errors: true

@@ -1,0 +1,52 @@
+---
+common_pkg_prerequisites:
+  - software-properties-common
+  - aptitude
+
+common_ppa_repositories16:
+  - ppa:libreoffice/ppa
+
+#common_ppa_repositories20:
+#  - ppa:libreoffice/ppa
+
+common_system_pkgs:
+  - chromium-browser
+  - firefox
+  - gscan2pdf
+
+system_pkgs_20:
+  - openjdk-11-jre
+  - ubuntu-restricted-extras
+  - libreoffice-style-breeze
+  - libreoffice-gnome
+  - libreoffice-writer
+  - libreoffice-calc
+  - libreoffice-impress
+  - libreoffice-math
+  - libreoffice-ogltrans
+  - libreoffice-pdfimport
+  - libreoffice-l10n-en-gb
+  - libreoffice-l10n-es
+  - libreoffice-l10n-pt-br
+  - libreoffice-help-en-gb
+  - libreoffice-help-es
+  - libreoffice-help-pt-br
+  - libreoffice-avmedia-backend-gstreamer
+  - libreoffice-base-core
+  - libreoffice-common
+  - libreoffice-core
+  - libreoffice-draw
+  - libreoffice-gtk3
+  - libreoffice-style-elementary
+  - libreoffice-style-galaxy
+  - libreoffice-style-tango
+  - python3
+  - usb-creator-gtk
+
+system_pkgs_16:
+  - unetbootin
+  - openjdk-8-jdk
+  - openjdk-8-jre
+  - ubuntu-restricted-extras
+  - ubuntu-restricted-addonssimple-scan
+

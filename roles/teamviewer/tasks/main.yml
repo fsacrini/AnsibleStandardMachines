@@ -1,0 +1,42 @@
+---
+- name: Download TeamViewer package
+  get_url:
+    url: https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+    dest: "/tmp/teamviewer_amd64.deb"
+    force: yes
+
+- name: Install TeamViewer
+  apt:
+    deb: "/tmp/teamviewer_amd64.deb"
+    force: yes
+
+- name: Stop TeamViewer Service
+  command: teamviewer daemon stop
+
+- name: Set default password
+  command: teamviewer passwd Pass4TV
+
+#- name: Setting TV to only accepting internal connection
+#  blockinfile:
+#    path: /opt/teamviewer/config/global.conf
+#    block: |
+#      [int32] EulaAccepted = 1
+#      [int32] General_DirectLAN = 1
+#      [int32] LanOnly = 1
+
+- name: Setting TV to only accepting internal connection
+  blockinfile:
+    path: /opt/teamviewer/config/global.conf
+    block: |
+      {{ item.name }}
+    marker: "# Added the info {{ item.name }} in the file"
+  loop:
+    - { name: "[int32] EulaAccepted = 1" }
+    - { name: "[int32] General_DirectLAN = 1" }
+    - { name: "[int32] LanOnly = 1" }
+
+- name: Set Teamviewer start automaticaly
+  command: teamviewer daemon enable
+
+- name: Set Teamviewer start
+  command: teamviewer daemon start

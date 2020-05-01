@@ -1,0 +1,72 @@
+---
+- name: Test distribution
+  fail: 
+    msg: "Not Ubuntu or invalid OS version, aborting..."
+  when:
+    - ansible_distribution != "Ubuntu"
+    - ansible_distribution_version != '16.04' or ansible_distribution_version != '20.04'
+
+- name: Install prerequisites for PPA management
+  apt: name={{ common_pkg_prerequisites }} state=latest force=yes
+
+- name: Add PPAs repositories for Ubuntu 16.04
+  apt_repository: repo={{ common_ppa_repositories16 }} update_cache=yes
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+
+#- name: Add PPAs repositories for Ubuntu 20.04
+#  apt_repository: repo={{ common_ppa_repositories20 }} update_cache=yes
+#  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '20.04'
+
+- name: Add canonical repositories
+  apt_repository: repo='deb http://archive.canonical.com/ubuntu {{ansible_distribution_release}} partner' state=present
+
+- name: Update system repositories
+  apt: update_cache=yes
+
+- name: Install common packages
+  package: name={{ common_system_pkgs }} state=latest
+
+- name: Installing software for workstations running ubuntu 20.04
+  apt:
+    name: "{{ system_pkgs_20 }}"
+    state: latest
+    install_recommends: yes
+    force: yes
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '20.04'
+
+- name: Installing software for workstations running ubuntu 16.04
+  apt:
+    name: "{{ system_pkgs_16 }}"
+    state: latest
+    install_recommends: yes
+    force: yes
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+
+- name: Download Chrome browser package
+  get_url:
+    url: "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+    dest: "/tmp/google_chrome.deb"
+    force: yes
+
+- name: Install chrome browser
+  apt:
+    deb: "/tmp/google_chrome.deb"
+    force: yes
+
+- apt:
+    name: '{{item}}'
+  with_items:
+    - libfreetype6
+    - libfreetype6-dev
+    - libfontconfig
+- name: 'Accept License'
+  shell: 'echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections'
+- apt: pkg=ttf-mscorefonts-installer
+
+- name: Copy code128 font to computer
+  copy: 
+    src: code128.ttf
+    dest: "/usr/share/fonts/" 
+    mode: 0644 
+    force: yes 
+    backup: yes
