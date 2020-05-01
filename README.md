@@ -1,15 +1,15 @@
 Ansible Playbook Ubuntu Setup
 ==============================
 
-This playbook is used to deploy configuration to target devices running Ubuntu 14.04 and 16.04
+This playbook is used to deploy configuration to target devices running Ubuntu 16.04, 20.04
 
-Tested on Ubuntu 14.04 and 16.04 64bits, patches are welcome.
+Tested on Ubuntu 16.04, and 20.04 64bits, patches are welcome.
 
 ## Installation
 
 Clone this repo to your Ansible roles directory
 
-    git clone https://github.com/jhernandezcsc/ansible-ubuntu-config-jlh.git
+    git clone 
 
 
 ## Usage
@@ -44,12 +44,11 @@ The destination hosts will be rebooted at the end of the execution of this playb
 
 After running this playbook, the workstation will be deployed with the following packages:
   - Unetbootin
-  - openjdk 7 for ubuntu 14.04
   - openjdk 8 for ubuntu 16.04
+  - openjdk 11 for ubuntu 20.04
   - Libreoffice 5.2
-  - Teamviewer 10
+  - Teamviewer 15
   - Clamtk
-  - Twinkle softphone
   - AdobeFlash pluggin
   - It will also be configured with the required security settigns to comply with csra standards.
 
