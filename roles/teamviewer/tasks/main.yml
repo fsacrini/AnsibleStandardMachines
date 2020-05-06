@@ -13,30 +13,20 @@
 - name: Stop TeamViewer Service
   command: teamviewer daemon stop
 
-- name: Set default password
-  command: teamviewer passwd Pass4TV
-
-#- name: Setting TV to only accepting internal connection
-#  blockinfile:
-#    path: /opt/teamviewer/config/global.conf
-#    block: |
-#      [int32] EulaAccepted = 1
-#      [int32] General_DirectLAN = 1
-#      [int32] LanOnly = 1
-
 - name: Setting TV to only accepting internal connection
-  blockinfile:
-    path: /opt/teamviewer/config/global.conf
-    block: |
-      {{ item.name }}
-    marker: "# Added the info {{ item.name }} in the file"
-  loop:
-    - { name: "[int32] EulaAccepted = 1" }
-    - { name: "[int32] General_DirectLAN = 1" }
-    - { name: "[int32] LanOnly = 1" }
+  lineinfile:
+    dest: /opt/teamviewer/config/global.conf
+    line: "{{ item }}"
+  with_items:
+    - '[int32] EulaAccepted = 1'
+    - '[int32] General_DirectLAN = 1'
+    - '[int32] LanOnly = 1'
 
 - name: Set Teamviewer start automaticaly
   command: teamviewer daemon enable
 
 - name: Set Teamviewer start
   command: teamviewer daemon start
+
+- name: Set default password
+  command: teamviewer passwd Pass4TV

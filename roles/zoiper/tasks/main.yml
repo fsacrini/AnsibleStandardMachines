@@ -1,0 +1,13 @@
+---
+- name: Copy zoiper to computer
+  copy: 
+    src: zoiper5_5.3.8_x86_64.deb
+    dest: "/tmp/zoiper5_5.3.8_x86_64.deb" 
+    mode: 0644 
+    force: yes 
+    backup: yes
+
+- name: Install Zoiper
+  apt:
+    deb: "/tmp/zoiper5_5.3.8_x86_64.deb"
+    force: yes

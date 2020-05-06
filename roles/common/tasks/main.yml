@@ -53,14 +53,9 @@
     deb: "/tmp/google_chrome.deb"
     force: yes
 
-- apt:
-    name: '{{item}}'
-  with_items:
-    - libfreetype6
-    - libfreetype6-dev
-    - libfontconfig
 - name: 'Accept License'
   shell: 'echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections'
+
 - apt: pkg=ttf-mscorefonts-installer
 
 - name: Copy code128 font to computer

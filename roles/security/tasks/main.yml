@@ -1,47 +1,125 @@
 ---
-# Security tasks
-
-- name: Copy login config file
-  copy: src=login.defs dest="/etc/login.defs" mode=644 force=yes backup=yes
-
-- name: Install libpam-cracklib
-  apt: name=libpam-cracklib state=latest force=yes
-
-- name: Copy common-password file
-  copy: src=common-password dest="/etc/pam.d/common-password" mode=0644 force=yes backup=yes
+# Setting up the Logon settings for Ubuntu 16.04
 
 - name: Create folder lightdm.conf.d
   file:
     path: /etc/lightdm/lightdm.conf.d
     state: directory
     mode: 0755
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
 
 - name: Copy my-custom-config file
-  copy: src=50-my-custom-config.conf dest="/etc/lightdm/lightdm.conf.d/50-my-custom-config.conf" mode=0755 force=yes
+  copy: 
+    src: 50-my-custom-config.conf
+    dest: "/etc/lightdm/lightdm.conf.d/50-my-custom-config.conf"
+    mode: 0755
+    force: yes
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
 
-#- name: Modify ufw default
-#  lineinfile:
-#    path: /etc/default/grub
-#    backrefs: yes
-#    regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT=")(.*)(".*)$'
-#    line: '\1\2 ipv6.disable=1\3'
-#  when: <String `ipv6.disable=1` is not present>
+# Setting up the Logon settings for Ubuntu 20.04
 
-#- name: Enable firewall
-#- block:
-#  - ufw: rule=allow name=OpenSSH port=ssh
-#  - ufw: rule=limit port=ssh
-#  - ufw: state=enabled policy=allow
+- name: Create folder /etc/dconf/db/gdm.d
+  file:
+    path: /etc/dconf/db/gdm.d
+    state: directory
+    mode: 0755
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '20.04'
+
+- name: Creating a gdm profile
+  lineinfile:
+    dest: /etc/dconf/profile/gdm
+    line: "{{ item }}"
+    create: yes
+    state: present
+  with_items:
+    - 'user-db:user'
+    - 'system-db:gdm'
+    - 'file-db:/usr/share/gdm/greeter-dconf-defaults'  
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '20.04'
+
+- name: Writing system-wide rules to disable user list
+  lineinfile:
+    dest: /etc/dconf/db/gdm.d/00-login-screen
+    line: "{{ item }}"
+    create: yes
+    state: present
+  with_items:
+    - '[org/gnome/login-screen]'
+    - '# Disable user list from login screen'
+    - 'disable-user-list=true'  
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '20.04'
+  notify: Update Database
+
+# --------------------------------------------------------------------------------------
+
+# All Machines
+
+- name: Copy login config file
+  copy: 
+    src: login.defs
+    dest: "/etc/login.defs"
+    mode: 644
+    force: yes
+    backup: yes
+
+- name: Install libpam-cracklib
+  apt: 
+    name: libpam-cracklib
+    state: latest
+    force: yes
+
+- name: Copy common-password file
+  copy: 
+    src: common-password
+    dest: "/etc/pam.d/common-password"
+    mode: 0644
+    force: yes
+    backup: yes
+
+- name: Disabling IPv6 by Grub
+  copy: 
+    src: grub
+    dest: /etc/default/grub
+    mode: 0644
+    force: yes
+    backup: yes
+  notify:
+    - Update Grub
 
 - name: Install unattended upgrades
-  apt: name=unattended-upgrades state=latest force=yes
+  apt: 
+    name: unattended-upgrades
+    state: latest
+    force: yes
 
 - name: Copy unattended-upgrades config
-  copy: src=50unattended-upgrades dest="/etc/apt/apt.conf.d/50unattended-upgrades" mode=0644 force=yes backup=yes
+  copy: 
+    src: 50unattended-upgrades
+    dest: "/etc/apt/apt.conf.d/50unattended-upgrades"
+    mode: 0644
+    force: yes
+    backup: yes
 
 - name: Copy periodic config
-  copy: src=10periodic dest="/etc/apt/apt.conf.d/10periodic" mode=664 force=yes backup=yes
+  copy: 
+    src: 10periodic
+    dest: "/etc/apt/apt.conf.d/10periodic"
+    mode: 664
+    force: yes
+    backup: yes
 
 - name: Copy release-updates config
-  copy: src=release-upgrades dest="/etc/update-manager/release-upgrades" mode=0644 force=yes backup=yes
+  copy: 
+    src: release-upgrades
+    dest: "/etc/update-manager/release-upgrades"
+    mode: 0644
+    force: yes
+    backup: yes
 
+- name: Upgrade system
+  apt: 
+    upgrade: full
+  notify: Reboot System
+
+
+    

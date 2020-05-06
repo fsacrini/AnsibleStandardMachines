@@ -42,6 +42,13 @@ system_pkgs_20:
   - libreoffice-style-tango
   - python3
   - usb-creator-gtk
+  - libc6
+  - libgcc1
+  - apt-transport-https
+  - dirmngr
+  - libfreetype6
+  - libfreetype6-dev
+  - libfontconfig
 
 system_pkgs_16:
   - unetbootin
@@ -49,4 +56,6 @@ system_pkgs_16:
   - openjdk-8-jre
   - ubuntu-restricted-extras
   - ubuntu-restricted-addonssimple-scan
-
+  - libfreetype6
+  - libfreetype6-dev
+  - libfontconfig
