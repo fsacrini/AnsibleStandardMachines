@@ -30,3 +30,9 @@
 
 - name: Set default password
   command: teamviewer passwd Pass4TV
+
+- name: Enabling Teamviewer to Run in Login Screen
+  replace:
+    path: /etc/gdm3/custom.conf
+    regexp: '^#Way(.+)$'
+    replace: 'Way\1'
